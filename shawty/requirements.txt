@@ -4,3 +4,4 @@ slowapi
 yt-dlp
 pydantic
 gunicorn
+colorama
