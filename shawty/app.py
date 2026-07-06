@@ -96,7 +96,7 @@ async def fetch_resource(request: Request, payload: SecureURLPayload):
             info = ydl.extract_info(url_str, download=False)
             
             # Extract the raw streams list so the UI can populate the buttons
-            formats = info.get('formats', [])
+           
             video_title = info.get('title', 'Requested Media File')
             
             # Clean up the formats list to only return what your UI needs (resolution, filesizes, direct URLs)
@@ -118,7 +118,8 @@ async def fetch_resource(request: Request, payload: SecureURLPayload):
             return {
                 "status": "success",
                 "title": video_title,
-                "streams": available_streams
+                "download_link": direct_cdn_url
+               
             }
             
     except yt_dlp.utils.DownloadError:
