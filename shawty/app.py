@@ -82,29 +82,43 @@ async def fetch_resource(request: Request, payload: SecureURLPayload):
         
     # 2. Configure safe programmatic extraction rules
     # [🐢 PERFORMANCE LABELLING: ZERO-DISK OPTIMIZATION]
+    # 2. Configure safe programmatic extraction rules
+    # [🐢 PERFORMANCE LABELLING: ZERO-DISK OPTIMIZATION]
     ydl_opts = {
-        'format': 'best',
         'skip_download': True,  # CRUCIAL: Keeps your server storage footprint at exactly zero.
         'quiet': True,
         'no_warnings': True,
+        'extract_flat': False,
     }
     
     try:
-        # Utilizing the library context manager prevents shell process leakage entirely.
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url_str, download=False)
             
-            # Extract the raw, playable CDN temporary file link from YouTube
-            direct_cdn_url = info.get('url')
+            # Extract the raw streams list so the UI can populate the buttons
+            formats = info.get('formats', [])
             video_title = info.get('title', 'Requested Media File')
             
-            if not direct_cdn_url:
-                raise HTTPException(status_code=404, detail="Unable to extract direct stream location.")
+            # Clean up the formats list to only return what your UI needs (resolution, filesizes, direct URLs)
+            available_streams = []
+            for f in formats:
+                # Look for streams containing both audio and video, or clean audio
+                if f.get('url') and (f.get('vcodec') != 'none' or f.get('acodec') != 'none'):
+                    available_streams.append({
+                        "format_id": f.get("format_id"),
+                        "resolution": f.get("resolution") or f.get("format_note") or "Audio",
+                        "ext": f.get("ext"),
+                        "filesize": f.get("filesize") or f.get("filesize_approx") or 0,
+                        "url": f.get("url") # This is the individual stream's direct download link
+                    })
+            
+            if not available_streams:
+                raise HTTPException(status_code=404, detail="Unable to extract direct stream locations.")
                 
             return {
                 "status": "success",
                 "title": video_title,
-                "download_link": direct_cdn_url
+                "streams": available_streams
             }
             
     except yt_dlp.utils.DownloadError:
