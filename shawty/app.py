@@ -9,6 +9,11 @@ from slowapi.errors import RateLimitExceeded
 import yt_dlp
 from backend.downloader import YouTubeDownloader
 from backend.util import validate_url
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"message": "Backend is running!"}
 
 
 # [🔒 SECURITY LABELLING: DoS PROTECTION]
