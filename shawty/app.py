@@ -98,9 +98,11 @@ async def fetch_resource(request: Request, payload: SecureURLPayload):
             # Extract the raw streams list so the UI can populate the buttons
            
             video_title = info.get('title', 'Requested Media File')
-             formats = info.get('formats', [])
-            # Clean up the formats list to only return what your UI needs (resolution, filesizes, direct URLs)
+            
+            formats = info.get('formats', [])
             available_streams = []
+            # Clean up the formats list to only return what your UI needs (resolution, filesizes, direct URLs)
+        
             for f in formats:
                 # Look for streams containing both audio and video, or clean audio
                 if f.get('url') and (f.get('vcodec') != 'none' or f.get('acodec') != 'none'):
