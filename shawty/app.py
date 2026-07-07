@@ -28,9 +28,9 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # tries to send requests to your backend web host (Render/Railway/Localhost).
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Swap "*" with your exact Netlify URL when live
+    allow_origins=["https://fetchdrop-download.netlify.app"],  # Swap "*" with your exact Netlify URL when live
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
