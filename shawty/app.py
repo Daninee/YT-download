@@ -98,7 +98,7 @@ async def fetch_resource(request: Request, payload: SecureURLPayload):
             # Extract the raw streams list so the UI can populate the buttons
            
             video_title = info.get('title', 'Requested Media File')
-            
+             formats = info.get('formats', [])
             # Clean up the formats list to only return what your UI needs (resolution, filesizes, direct URLs)
             available_streams = []
             for f in formats:
@@ -114,7 +114,7 @@ async def fetch_resource(request: Request, payload: SecureURLPayload):
             
             if not available_streams:
                 raise HTTPException(status_code=404, detail="Unable to extract direct stream locations.")
-                
+                direct_cdn_url = available_streams[0]["url"]
             return {
                 "status": "success",
                 "title": video_title,
