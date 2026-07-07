@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 slowapi
-yt-dlp
+yt-dlp=>2024.12.31
 pydantic
 gunicorn
 colorama
